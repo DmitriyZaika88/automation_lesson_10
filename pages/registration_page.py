@@ -1,7 +1,8 @@
 import os
 
-from selene import be, have
+from selene import be, have, command
 from selene.support.shared import browser
+from data.users import User
 
 
 class RegistrationPage:
@@ -61,9 +62,28 @@ class RegistrationPage:
         browser.element('#react-select-4-input').should(be.blank).type(city).press_enter()
         return self
 
+    def click_submit(self):
+        browser.element('#submit').perform(command.js.click)
+        return self
+
     def should_registered_user_with(self, full_name, email, gender, number,
                                     date_of_birth, subjects, hobbies, photo, address, state_and_city):
         browser.element('.table').all('td').even.should(
             have.exact_texts(full_name, email, gender, number,
                              date_of_birth, subjects, hobbies, photo, address, state_and_city))
+        return self
+
+    def user_registration(self, user: User):
+        self.type_first_name(user.first_name)
+        self.type_last_name(user.last_name)
+        self.type_email(user.email)
+        self.choose_gender(user.gender)
+        self.type_number(user.number)
+        self.type_date_of_birth(user.month_of_birth, user.year_of_birth, user.day_of_birth)
+        self.type_subjects(user.subjects)
+        self.choose_hobbies(user.hobbies)
+        self.picture_path(user.picture)
+        self.type_address(user.address)
+        self.choose_state_and_city(user.state, user.city)
+        self.click_submit()
         return self
